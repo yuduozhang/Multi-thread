@@ -1,0 +1,55 @@
+======================================================================
+Experiments Results
+======================================================================
+  
+Experiment 1: Transformed program, compiler optimization off
+linux024:~/cs343/a1/submit> time ./q2 1000 1000 50000
+0.300u 
+
+Experiment 2: Original program, compiler optimization off
+linux024:~/cs343/a1/submit> time ./q2_original 1000 1000 50000
+94.360u 
+
+Experiment 3: Transformed program, compiler optimization on
+linux024:~/cs343/a1/submit> time ./q2 1000 1000 50000
+0.150u 
+
+Experiment 4: Original program, compiler optimization on
+linux024:~/cs343/a1/submit> time ./q2_original 1000 1000 50000
+75.660u 
+
+
+======================================================================
+Observed Difference
+======================================================================
+
+Without Optimization:
+Transformed program runs much faster than original 
+program (about 300 times faster).
+
+With Optimization:
+Transformed program runs much faster than original 
+program (about 500 times faster).
+
+Apparantly, both programs run faster in optimization mode
+than in non-optimization mode. Transformed program runs 50% faster, 
+while original program runs about 20% faster.
+
+======================================================================
+Reason for Major Performance Difference
+======================================================================
+The original program uses termination exception, which
+performs a static return, so the stack of try() scope 
+is unwound when the exception is caught by handler. 
+This also explains why ~T() is called in the original program.
+
+While in the transformed program, termination exception is
+changed to routine, so the return type becomes dynamic,
+hence the stack of f() is NOT unwound.
+
+So I speculate that unwounding stack in the original program
+consumes much time, which results the major performance
+difference.
+
+
+

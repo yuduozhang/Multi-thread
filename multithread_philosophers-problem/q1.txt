@@ -1,0 +1,14 @@
+It's a deadlock.
+
+Generously, definition of a deadlock is "the state when one or more
+processes are waiting for an event that will not occur."
+
+At the climax, there are four Angels, say they are A1,A2,A3,A4. But A1,
+and A2 are looking at each other, and A3 and A4 are also looking at each other. 
+So there is a deadlock, since A1 is waiting for A2 to move his sight, but A2 
+is being looked at by A1 at the same time, so A2 cannot move unless A1
+moves firstly. But A1 also cannot move until A2 moves. Hence they are
+waiting for each other to move firstly, which is an event that cannot
+happen. Similar situations happen for A3 and A4.
+
+Hence it's a deadlock.

@@ -1,0 +1,20 @@
+frame#	call	&hv		        &gv		fram:hv	fram:gv
+==============================================
+2	    h(2,0)	0x7fffd8157fc8			
+3	    h(1,0)	0x7fffd8157f78			
+4	    h(0,0)	0x7fffd8157f28			
+5	    g(1,0)	0x7fffd8157f28	0x7fffd8157ed8	4 
+6	    g(0,0)	0x7fffd8157f28	0x7fffd8157e88	4 
+7	    h(1,1)	0x7fffd8157e38			
+8	    h(0,1)	0x7fffd8157de8			
+9	    g(1,1)	0x7fffd8157de8	0x7fffd8157d98	8 
+10	    g(0,1)	0x7fffd8157de8	0x7fffd8157d48	8 
+11	    f(1)	0x7fffd8157de8	0x7fffd8157d48	8       10 	 
+12	    f(0)	0x7fffd8157de8	0x7fffd8157d48	8       10 
+
+In a nested routine, lexical link is a mechanism of compiler
+to access the stack frame of outer routine.
+
+In a nested routine, a lexical link can find the stack frame
+of the global variable it tries to access, and refer to the
+stack frame correctly.

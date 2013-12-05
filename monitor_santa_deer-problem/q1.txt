@@ -1,0 +1,72 @@
+======================================================================
+ Timing Results (optimization vs no optimization)
+======================================================================
+
+Without optimization:
+
+Routine Call 
+----------------------------------------------------------------------
+linux032:~/cs343/a4> time ./a.out 400000000
+4.170u 0.010s 0:04.18 100.0%    0+0k 0+0io 0pf+0w
+
+Coroutine context-switch 
+----------------------------------------------------------------------
+linux032:~/cs343/a4> time ./a.out 400000000
+27.700u 0.010s 0:27.71 100.0%   0+0k 0+0io 0pf+0w
+
+Task context-switch 
+----------------------------------------------------------------------
+linux032:~/cs343/a4> time ./a.out 400000000
+86.930u 0.000s 1:26.94 99.9%    0+0k 0+0io 0pf+0w
+
+
+With optimization:
+
+Routine Call 
+----------------------------------------------------------------------
+linux032:~/cs343/a4> time ./a.out 400000000
+1.220u 0.000s 0:01.22 100.0%    0+0k 0+0io 0pf+0w
+
+Coroutine context-switch 
+----------------------------------------------------------------------
+linux032:~/cs343/a4> time ./a.out 400000000
+16.190u 0.000s 0:16.20 99.9%    0+0k 0+0io 0pf+0w
+
+Task context-switch 
+----------------------------------------------------------------------
+linux032:~/cs343/a4> time ./a.out 400000000
+86.920u 0.070s 1:26.99 100.0%   0+0k 0+0io 0pf+0w
+
+
+======================================================================
+ Observed Difference
+======================================================================
+
+1. In both with optimization and without optimization cases, 
+the timing results are as following:
+Routine Call < Coroutine context-switch < Task context-switch
+
+2. Timing results with optimization is faster than timing results
+without optimization. The difference is significant in Routine call and
+Coroutine context-switch, not significant in Task context-switch.
+
+
+======================================================================
+ Speculation of Reason of Performance Difference
+======================================================================
+
+1. Routine call has only one stack, it doesn't need to search for other
+stacks to do context switch. And the only task (main) is always excuting
+until terminates (always scheduled). Hence the performance is the best.
+
+2. Coroutine context-switch needs to search for stacks to to context
+switch, hence it's slower than routine call. But it's always scheduled
+at the front of the ready queue, and excuting until terminates. Hence
+its performance is in the middle place.
+
+3. Task context-switch needs to reschedule in the ready queue. (After
+every yield(), the task will be put at the back of the ready queue, and
+waits for next schedule). And it also needs to search for stacks to do
+context switch. Hence its performance is the worst.
+
+Yes, the compiler optimization has an effect on the performance.

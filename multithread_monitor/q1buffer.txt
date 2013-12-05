@@ -1,0 +1,109 @@
+======================================================================
+ Timing Results (optimization vs no optimization)
+======================================================================
+
+BUSY without optimization
+----------------------------------------------------------------------
+1%>linux028:~/cs343/a3/submit/q1> time ./boundedBuffer 50 55 150000 30 10
+total: 278834376
+7.870u 0.000s 0:07.87 100.0%	0+0k 0+0io 0pf+0w
+
+
+NOBUSY without optimization
+----------------------------------------------------------------------
+1%>linux028:~/cs343/a3/submit/q1> time ./boundedBuffer 50 55 150000 30 10
+total: 278834376
+17.320u 0.010s 0:17.33 100.0%	0+0k 0+0io 0pf+0w
+
+
+BUSY with optimization
+----------------------------------------------------------------------
+1%>linux028:~/cs343/a3/submit/q1> time ./boundedBuffer 50 55 150000 30 10
+total: 278834376
+7.760u 0.030s 0:07.76 100.3%	0+0k 0+0io 0pf+0w
+
+
+NOBUSY with optimization
+----------------------------------------------------------------------
+1%>linux028:~/cs343/a3/submit/q1> time ./boundedBuffer 50 55 150000 30 10
+total: 278834376
+17.240u 0.070s 0:17.24 100.4%	0+0k 0+0io 0pf+0w
+
+
+
+
+======================================================================
+ Observed Difference
+======================================================================
+
+1. In both with optimization and without optimization cases, 
+the timing results of BUSY waiting version are faster than NOBUSY 
+waiting version (around 10 seconds faster).
+
+2. Timing results with optimization is faster than timing results
+without optimization (BUSY vs BUSY, NOBUSY vs NOBUSY). But NOBUSY
+version with optimization is still around 10 seconds slower than BUSY 
+version without optimization.
+
+
+
+
+======================================================================
+ Speculation of Reason of Performance Difference (BUSY vs NOBUSY)
+======================================================================
+
+BUSY version is faster because it allows starvation for better
+performance. For example, when a signaled task is slower in the race to
+acquire owner locker than barging tasks, BUSY version will just let the 
+signaled task wait again. And those faster barging tasks can enter
+critical section. Hence the slower signaled tasks don't  slower the 
+performance.
+
+However, in the NOBUSY version, if the signaled task is slower in
+the race to acquire owner locker than barging tasks, NOBUSY will prevent
+barging tasks from entering critical section. So all the faster barging
+tasks have to wait until slower signaled tasks exit the critical
+section. Hence in NOBUSY version, signaled tasks actually slower the
+program's performance for fairness (no starvation).
+
+
+
+
+======================================================================
+ Timing Results (multiprocessor) 
+======================================================================
+
+BUSY
+----------------------------------------------------------------------
+linux028:~/cs343/a3/submit/q1> time ./boundedBuffer 50 55 150000 30 10
+total: 278834376
+7.010u 0.000s 0:07.01 100.0%    0+0k 0+0io 0pf+0w
+
+
+NOBUSY
+----------------------------------------------------------------------
+linux028:~/cs343/a3/submit/q1> time ./boundedBuffer 50 55 150000 30 10
+total: 278834376
+16.610u 0.010s 0:16.62 100.0%   0+0k 0+0io 0pf+0w
+
+
+
+
+======================================================================
+ Observed Difference
+======================================================================
+
+1. With multiprocessor, both BUSY and NOBUSY version are faster than the
+version with uniprocessor. But the difference is not significant.
+
+2. But NOBUSY version is still slower than BUSY version.
+
+======================================================================
+ Speculation of Reason of Performance Difference 
+ (multiprocessor vs uniprocessor)
+======================================================================
+
+Performance with multiprocessor is faster since threads are running on
+different processors parallelly. But the efficiency is not significant
+since the benefit of concurrent programming is accumulated, so a single
+concurrent program will not make a big difference,

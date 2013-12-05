@@ -1,0 +1,460 @@
+TEST DOCUMENTATION FOR Q2PHIL
+=========================
+It's a solution to the philosopher dining problem implemented in uC++ monitor using only internal
+scheduling, simulated uC++ automatic-signal monitor, Java monitor, and uC++ server tasks.
+
+USER INTERFACE TESTING
+    Test if appropriate usage message is printed to screen if arguments are missing or invalid.
+
+    TESTING
+    Here is the script-fixed log of the testing performed with line numbers attached.
+
+    uC++ driver:
+     1  Script started on Sun 18 Mar 2012 10:03:21 PM EDT
+     2  1%>linux024:~/cs343/a5> ./phil -1
+     3  Usage: ./phil [ philosophers (> 1) [ noodles (> 0) [ Seed (> 0) ] ] ]
+     4  1%>linux024:~/cs343/a5> ./phil 1
+     5  Usage: ./phil [ philosophers (> 1) [ noodles (> 0) [ Seed (> 0) ] ] ]
+     6  1%>linux024:~/cs343/a5> ./phil 5 0
+     7  Usage: ./phil [ philosophers (> 1) [ noodles (> 0) [ Seed (> 0) ] ] ]
+     8  1%>linux024:~/cs343/a5> ./phil 5 -1
+     9  Usage: ./phil [ philosophers (> 1) [ noodles (> 0) [ Seed (> 0) ] ] ]
+    10  1%>linux024:~/cs343/a5> ./phil 5 30 0
+    11  Usage: ./phil [ philosophers (> 1) [ noodles (> 0) [ Seed (> 0) ] ] ]
+    12  1%>linux024:~/cs343/a5> ./phil 5 30 -1
+    13  Usage: ./phil [ philosophers (> 1) [ noodles (> 0) [ Seed (> 0) ] ] ]
+    14  1%>linux024:~/cs343/a5> exit
+    15  exit
+       
+    16  Script done on Sun 18 Mar 2012 10:04:22 PM EDT
+
+    Java driver:
+     1    Script started on Mon 19 Mar 2012 10:11:20 PM EDT
+     2  1%>linux024:~/cs343/a5> java q2Driver -1
+     3  Usage: q2Driver [ philosophers (> 1) [ noodles (> 0) [ Seed (> 0) ] ] ]
+     4  1%>linux024:~/cs343/a5> java q2Driver 1
+     5  Usage: q2Driver [ philosophers (> 1) [ noodles (> 0) [ Seed (> 0) ] ] ]
+     6  1%>linux024:~/cs343/a5> java q2Driver 5 0
+     7  Usage: q2Driver [ philosophers (> 1) [ noodles (> 0) [ Seed (> 0) ] ] ]
+     8  1%>linux024:~/cs343/a5> java q2Driver 5 -1
+     9  Usage: q2Driver [ philosophers (> 1) [ noodles (> 0) [ Seed (> 0) ] ] ]
+    10  1%>linux024:~/cs343/a5> java q2Driver 5 30 0
+    11  Usage: q2Driver [ philosophers (> 1) [ noodles (> 0) [ Seed (> 0) ] ] ]
+    12  1%>linux024:~/cs343/a5> java q2Driver 5 30 -1
+    13  Usage: q2Driver [ philosophers (> 1) [ noodles (> 0) [ Seed (> 0) ] ] ]
+    14  1%>linux024:~/cs343/a5> exit
+    15  exit
+
+    16  Script done on Mon 19 Mar 2012 10:12:04 PM EDT
+
+
+    ANALYSIS 
+    Line 2 tests invalid philosophers number (out of range)
+    Line 4 tests invalid philosophers number (out of range, and on the boundary 0)
+    Line 6 tests invalid noodles number (out of range, and on the boundary 0)
+    Line 8 tests invalid noodles number (out of range) 
+    Line 10 tests invalid Seed  (out of range, and on the boundary 0)
+    Line 12 tests invalid Seed  (out of range)
+    All tests passed since an appropriate usage message is printed to the screen.
+
+
+ALGORITHM TESTING
+      
+  TEST 1:
+  -------
+
+    DATA DESCRIPTION
+    Don't specify Seed, see whether the output generated each time is different. 
+
+    TESTING
+    Here is the script-fixed log of the testing performed with line numbers attached.
+    
+     1  1%>linux024:~/cs343/a5> ./phil 2 1 > output1
+     2  1%>linux024:~/cs343/a5> ./phil 2 1 > output2
+     3  1%>linux024:~/cs343/a5> ./phil 2 1 > output3
+    ...
+    13  1%>linux024:~/cs343/a5> diff output1 output2
+    14  3c3
+    15  < H H   
+    16  ---
+    17  > H     
+    18  5a6
+    19  >   H   
+    20  1%>linux024:~/cs343/a5> diff output1 output3
+    21  4c4
+    22  < E1,0      
+    23  ---
+    24  > E1,0  W1,0    
+    25  1%>linux024:~/cs343/a5> diff output2 output3
+    26  3,4c3,4
+    27  < H     
+    28  < E1,0      
+    29  ---
+    30  > H H   
+    31  > E1,0  W1,0    
+    32  6d5
+    33  <   H   
+    34  1%>linux024:~/cs343/a5> exit
+    35  exit
+       
+    36  Script done on Sun 18 Mar 2012 10:16:39 PM EDT
+     
+
+    ANALYSIS
+    The three invocations generate different results.
+    This can be shown by lines 14-19, 21-24, 26-33. 
+
+
+  TEST 2:
+  -------
+    DATA DESCRIPTION
+    Test with philosophers (5) and noodles (20) 
+
+    TESTING
+    Here is the script-fixed log of the testing performed with line numbers attached.
+    
+    Internal Scheduling Monitor Version:
+
+     1  Script started on Mon 19 Mar 2012 07:33:58 PM EDT
+     2  1%>linux024:~/cs343/a5> make phil TYPE=INT
+     3  echo "IMPLTYPE=INT" > ImplType
+    ...
+    11  uC++ Version 5.7.0 (single processor) (debug) (no yield) (no verify) (no profile)
+    12  1%>linux024:~/cs343/a5> ./phil 5 20
+    13  Phil0   Phil1   Phil2   Phil3   Phil4
+    14  ******  ******  ******  ******  ******
+    15  H       H
+    16          E1,19   H       H       H
+    17                  W2,3    E1,19
+    18  W0,1    T       E2,18   T
+    19                          H       E1,19
+    20  E1,19                   W3,4    T
+    21  T       H       T       E1,18
+    22                  H       T
+    23          W1,2    E1,17
+    24          E3,16   T
+    25  H       T
+    26          H                       H
+    27  W0,1                            E2,17
+    28  E2,17   W1,2    H               T
+    29  T               E4,13   H
+    30  H       E3,13   T       W3,4    H
+    31  W0,1    T
+    32  E4,13
+    33  T                       E4,14   W4,0
+    34                          T       E2,15
+    35                          H       T
+    36                          E3,11
+    37                  H       T
+    38                  E2,11   H
+    39  H       H       T
+    40                  H
+    41                  E4,7
+    42  E1,12           T       E5,6
+    43  T       W1,2            T       H
+    44  H       E4,9
+    45  W0,1                            E5,10
+    46  E1,11   T                       T
+    47  T
+    48  H
+    49  E2,9
+    50  T               H       H
+    51                          E2,4
+    52          H               T
+    53          E2,7
+    54          T       E1,6
+    55                  T
+    56                  H
+    57                  E1,5
+    58                  T       H
+    59                          E4,0    H
+    60  H                               W4,0
+    61  ...     ...     ...     F       ...
+    62                  H               E3,7
+    63  E2,7            E3,2            T
+    64  T       H       T               H
+    65          E4,3                    E5,2
+    66          T       H               T
+    67                  E2,0            H
+    68                                  E2,0
+    69  ...     ...     ...     ...     F
+    70  H
+    71  ...     ...     F       ...     ...
+    72  E1,6    H
+    73  T       E3,0
+    74  ...     F       ...     ...     ...
+    75  H
+    76  E3,3
+    77  T
+    78  H
+    79  E3,0
+    80  F       ...     ...     ...     ...
+    81  ***********************
+    82  Philosophers terminated
+    83  1%>linux024:~/cs343/a5> exit
+    84  exit
+    85
+    86  Script done on Mon 19 Mar 2012 07:34:33 PM EDT
+
+    Note: because of cooporation, waiting taks very little time.
+
+    ANALYSIS
+    -------+---------+----------------------------------------------+-------------------------------------------------------------
+    Test # | Line #s | Key Point of Test                            |   Analysis of Test
+    -------+---------+----------------------------------------------+-------------------------------------------------------------
+        1    15-80     Information is buffered until a column is        Line 15 is flushed when "H" in Phil1 is
+                       overwritten for a particular entry, which        overwritten by "E1,19" in line 16. Similar behavor
+                       causes the buffered data to be ﬂushed            happens in other lines.
+    -------+---------+----------------------------------------------+-------------------------------------------------------------
+        2    15-80     Different States are printed in correct         All "Hungry" state are printed with a single   
+                       Format.                                         letter "H". "Thinking" state are printed with a
+                                                                        single letter "T".
+                                                                        "Eating" and "Waiting" state are printed
+                                                                        with a single "E" or "W", followed by two integers.
+                                                                        Finished state is printed with "F", and all
+                                                                        other columns are printed "...". All are as expected.
+    -------+---------+----------------------------------------------+-------------------------------------------------------------
+        3   18, 42       Bite numbers and left noodle numbers are       Line 42 shows Phil1 is eating 1 noodle, leaving
+            etc          reasonable                                     12(13-1) noodles. Phil3 is eating 5 noodles, leaving
+                                                                        6(11-5) noodles. Similar behavor can be observed in
+                                                                        other lines.
+    -------+---------+----------------------------------------------+-------------------------------------------------------------
+        4   17, 18       Waiting fork numbers are reasonable            Line 17 shows Phil2 is waiting for forks 2, 3, as expected.
+            etc                                                         Similar behavor can be observed in other lines.
+    -------+---------+----------------------------------------------+-------------------------------------------------------------
+        5   15-80       No adjacent philosophers eat at the same time   When any philosopher is eating, his neighbour is
+                                                                        not eating, which can be observed in lines 20, 23, etc.
+    -------+---------+----------------------------------------------+-------------------------------------------------------------
+        6   15-80       No Starvation                                   No philosophers wait for too long until next
+                                                                        eating. No two or more philosophers conspire so that another 
+                                                                        philosopher never gets an opportunity to eat.
+    -------+---------+----------------------------------------------+-------------------------------------------------------------
+        7   61, 69, 71  All philosophers are finished and terminated    Lines 61, 69, 71, 74, 80 show that all
+            74, 80                                                      philosophers are finished. Line 82 shows that
+                                                                        all philosophers are terminated
+    -------+---------+----------------------------------------------+-------------------------------------------------------------
+        
+
+    Automatic-signal Monitor Version:
+	
+     1  Script started on Mon 19 Mar 2012 07:41:50 PM EDT
+     2  1%>linux024:~/cs343/a5> make phil TYPE=AUTO
+    ...
+    11  uC++ Version 5.7.0 (single processor) (debug) (no yield) (no verify) (no profile)
+    12  1%>linux024:~/cs343/a5> ./phil 5 20
+    13  Phil0   Phil1   Phil2   Phil3   Phil4
+    14  ******  ******  ******  ******  ******
+    15  H       H
+    16          E4,16
+    17          T       H       H
+    18                          E3,17   H
+    19  E5,15           W2,3    T       W4,0
+    20  T               E2,18           E5,15
+    21                  T
+    22                  H               T
+    23          H       E5,13
+    24                  T       H
+    25          E4,12           E1,16
+    26          T               T       H
+    27                                  E2,13
+    28  H               H               T
+    29  E4,11           E5,8
+    30                  T               H
+    31  T       H       H               W4,0
+    32  H       E1,11   W2,3    H       E1,12
+    33  E3,8    T       E5,3    W3,4    T
+    34  T       H       T       E1,15
+    35  H       E1,10           T
+    36  E5,3    T
+    37  T       H                       H
+    38                                  E4,8
+    39          E3,7                    T
+    40          T               H
+    41                          E4,11   H
+    42                  H       T       W4,0
+    43                  E2,1            E2,6
+    44  H               T               T
+    45  E1,2
+    46  T
+    47  H
+    48  E2,0    H
+    49  F       ...     ...     ...     ...
+    50                          H
+    51                          E5,6
+    52          E3,4            T
+    53          T       H               H
+    54                  E1,0
+    55  ...     ...     F       ...     ...
+    56                                  E3,3
+    57                                  T
+    58                          H       H
+    59                          E5,1    W4,0
+    60                          T       E1,2
+    61          H               H       T
+    62          E3,1            E1,0
+    63          T
+    64  ...     ...     ...     F       ...
+    65                                  H
+    66                                  E1,1
+    67          H                       T
+    68          E1,0
+    69  ...     F       ...     ...     ...
+    70                                  H
+    71                                  E1,0
+    72  ...     ...     ...     ...     F
+    73  ***********************
+    74  Philosophers terminated
+    75  1%>linux024:~/cs343/a5> exit
+    76  exit
+    77
+    78  Script done on Mon 19 Mar 2012 07:42:31 PM EDT
+
+    ANALYSIS
+    Similar analysis apply to this version.
+
+    Java Monitor Version:
+    
+	linux024:~/cs343/a5> cat -n test
+     1  Script started on Mon 19 Mar 2012 07:48:51 PM EDT
+     2  1%>linux024:~/cs343/a5> java q2Driver 5 20
+     3  Phil0   Phil1   Phil2   Phil3   Phil4
+     4  ******  ******  ******  ******  ******
+     5  H       H       H
+     6  E4,16   W1,2            H       H
+     7  T
+     8  H       E4,16           W3,4    E2,18
+     9                                  T
+    10          T       W2,3    E3,17   H
+    11  E1,15                   T
+    12          H               H
+    13                  E3,17   W3,4    E4,14
+    14  T               T
+    15  H       E2,14   H       E1,16
+    16                  W2,3            T
+    17                  E2,15           H
+    18  E2,13           T               W4,0
+    19                  H       T
+    20          T       E2,13
+    21          H       T
+    22                  H       H
+    23  T               W2,3            E4,10
+    24          E3,11                   T
+    25          T               W3,4    H
+    26  H       H       E3,10
+    27                  T               W4,0
+    28                  H       E1,15
+    29  W0,1    E2,9            T
+    30          T               H       E4,6
+    31                  E5,5            T
+    32  E1,12   H               W3,4    H
+    33  T
+    34  H               T       E2,13   W4,0
+    35  W0,1    E5,4    H       T       E1,5
+    36                                  T
+    37  E2,10   T       E4,1            H
+    38                  T
+    39                  H
+    40                  E1,0    H
+    41  ...     ...     F       ...     ...
+    42  T       H               W3,4    E4,1
+    43          E3,1                    T
+    44  H                               H
+    45          T               E4,9    W4,0
+    46                          T       E1,0
+    47          H               H
+    48  E2,8                    E4,5
+    49  ...     ...     ...     ...     F
+    50  T       W1,2
+    51  H
+    52  W0,1    E1,0            T
+    53  ...     F       ...     ...     ...
+    54  E2,6                    H
+    55  T                       E3,2
+    56  H                       T
+    57  E5,1
+    58  T
+    59  H
+    60  E1,0
+    61  F       ...     ...     ...     ...
+    62                          H
+    63                          E2,0
+    64  ...     ...     ...     F       ...
+    65  ***********************
+    66  Philosophers terminated
+    67  1%>linux024:~/cs343/a5> exit
+    68  exit
+    69
+    70  Script done on Mon 19 Mar 2012 07:49:14 PM EDT
+
+ 
+    ANALYSIS
+    Similar analysis apply to this version. Note there is no barging happening, since no philosophers waited too long
+    before next eating, and no philosophers keep eating. Hence the ticket system works. Note since little cooporation is
+    done in this version, waiting will take longer time as stated in lines 35, 42, etc.
+
+    Internal/External Scheduling Task Version
+    
+     1  Script started on Mon 19 Mar 2012 07:51:05 PM EDT
+     2  1%>linux024:~/cs343/a5> make phil TYPE=TASK
+     3  echo "IMPLTYPE=TASK" > ImplType
+    ...
+    11  uC++ Version 5.7.0 (single processor) (debug) (no yield) (no verify) (no profile)
+    12  1%>linux024:~/cs343/a5> ./phil 5 20
+    13  Phil0   Phil1   Phil2   Phil3   Phil4
+    14  ******  ******  ******  ******  ******
+    15  H       H       H       H       H
+    16                  E3,17           E4,16
+    17  W0,1            T               T
+    18  E2,18   W1,2            E3,17
+    19  T       E1,19   H       T
+    20          T       E4,13           H
+    21  H       H       T       H       E1,15
+    22          E1,18                   T
+    23          T       H       E3,14   H
+    24  E4,14   H               T       W4,0
+    25  T                       H       E2,13
+    26  H       E4,14                   T
+    27          T       W2,3            H
+    28  E3,11           E5,8    W3,4
+    29  T       H       T       E4,10
+    30                          T       E1,12
+    31          E2,12                   T
+    32  H       T       H       H       H
+    33          H       E5,3    W3,4    E1,11
+    34                  T       E2,8    T
+    35  W0,1    E2,10           T       H
+    36  E4,7    T       H       H
+    37  T       H                       W4,0
+    38                  E3,0    W3,4    E4,7
+    39          W1,2                    T
+    40  ...     ...     F       ...     ...
+    41  H       E4,6
+    42  E2,5    T               E2,6
+    43  T       H               T       H
+    44  H       E1,5            H       E3,4
+    45          T                       T
+    46  E3,2    H               E4,2    H
+    47  T                       T       W4,0
+    48  H       E3,2                    E1,3
+    49  W0,1    T               H       T
+    50  E2,0    H
+    51  F       ...     ...     ...     ...
+    52          E2,0            E2,0    H
+    53  ...     ...     ...     F       ...
+    54
+    55  ...     F       ...     ...     ...
+    56                                  E3,0
+    57  ...     ...     ...     ...     F
+    58  ***********************
+    59  Philosophers terminated
+    60  1%>linux024:~/cs343/a5> exit
+    61  exit
+    62
+    63  Script done on Mon 19 Mar 2012 07:52:03 PM EDT
+
+    ANALYSIS
+    Similar analysis applies to this version. Note for this version, waiting consumes the least time, which makes sense
+    since philosophers are doing cooporation here. (No busy waiting) 
+
+    From this we can say that each condition in the program has been exercised, and the four versions of table
+    implementation is correct. 

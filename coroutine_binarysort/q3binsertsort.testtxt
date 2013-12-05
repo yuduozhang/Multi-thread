@@ -1,0 +1,388 @@
+TEST DOCUMENTATION FOR Q3BINSERTSORT 
+=========================
+It's a semi-coroutine program to sort a set of values into
+ascending order using a binary-tree insertion method.
+
+USER INTERFACE TESTING
+    Test if the unsorted input ﬁle is not speciﬁed, an
+    appropriate usage message is printed and the program
+    terminates.
+
+    TESTING
+    Here is the script-fixed log of the testing performed.
+
+     1   Script started on Sun 15 Jan 2012 11:30:38 PM EST
+     2  export: Command not found.
+     3  1%>linux028:~/cs343/a1/submit> ./binsertsort
+     4  Usage: ./binsertsort unsorted-ﬁle [ sorted-ﬁle ]
+     5  1%>linux028:~/cs343/a1/submit> exit
+     6  exit
+     7  Script done on Sun 15 Jan 2012 11:30:50 PM EST 
+
+    ANALYSIS
+    Line 4 shows the appropriate usage message of binsertsort. 
+
+ALGORITHM TESTING
+
+  TEST 1:
+  -------
+    DATA DESCRIPTION
+    The first input file used is "q3input_Integer.in". It
+    tests the program's ability to sort a list of unsorted
+    integers. Sentinel used in this testing is -1.
+    The contents of the file, with each line numbered, are:
+
+         1   8 30 12 39 43 11 59 20 28 
+         2   1 0 
+         3   0
+         4   10 20 19 18 17 16 15 14 13 12 11 
+         5   4 1 4 6 7 
+         6   13 3 3 2 2 1 1 4 4 5 4 3 2 1 
+         7   5 1      3   
+         8   4     2 
+         9                        0 
+
+    Line 1 is used to verify that a list of randomly
+    distributed unsorted integers can be sorted correctly.
+    Lines 2 and 3 verify that the special case Sentinel being
+    passed as the second and first value to the coroutine is handled.  
+    Line 4 verifies that a list of decending sorted integers 
+    can be sorted into ascending order. So the binary tree
+    constructed only has left branches, this tests the
+    portion of code that passes back left branch sorted values heavily.
+    Line 5 verifies that a list of ascending order sorted
+    integers will be unchanged. So the binary tree
+    constructed for this case only has right branches, so
+    this tests the portion of code that passes back right branch
+    sorted values heavily.
+    Line 6 tests a list of unsorted integers that includes 
+    repetitive numbers can be sorted correctly.
+    Lines 7 8 9 is one set of 5 values, it tests the data
+    input that values are separated by random white-space character and appear across
+    3 of lines.
+
+    TESTING
+    Here is the script-fixed log of the testing performed with line numbers
+    attached.
+     1   Script started on Sun 15 Jan 2012 09:04:15 PM EST
+     2  export: Command not found.
+     3  1%>linux032:~/cs343/a1/submit> cat q3input_Integer.in 
+     4  8 30 12 39 43 11 59 20 28 
+     5  1 0 
+     6  0
+     7  10 20 19 18 17 16 15 14 13 12 11 
+     8  4 1 4 6 7 
+     9  13 3 3 2 2 1 1 4 4 5 4 3 2 1 
+    10  5 1      3   
+    11  4     2 
+    12                          0 
+    13  1%>linux032:~/cs343/a1/submit> ./binsertsort q3input_Integer.in 
+    14  30 12 39 43 11 59 20 28 
+    15  11 12 20 28 30 39 43 59 
+       
+    16  0 
+    17  0 
+       
+    blank line from list of length 0 (not actually printed)
+    blank line from list of length 0 (not actually printed)      
+       
+    18  20 19 18 17 16 15 14 13 12 11 
+    19  11 12 13 14 15 16 17 18 19 20 
+       
+    20  1 4 6 7 
+    21  1 4 6 7 
+       
+    22  3 3 2 2 1 1 4 4 5 4 3 2 1 
+    23  1 1 1 2 2 2 3 3 3 4 4 4 5 
+       
+    24  1 3 4 2 0 
+    25  0 1 2 3 4 
+       
+    26  1%>linux032:~/cs343/a1/submit> exit
+    27  exit
+    28  Script done on Sun 15 Jan 2012 09:04:48 PM EST
+
+    ANALYSIS
+    The results from running the program on "q3input_Integer.in" show that:
+    1)  All unsorted integer lists are sorted. Output format
+        is as expected: print the original input list followed by
+        the sorted list and end each set of output with a blank line.
+    2)  The special case Sentinel being passed as the second
+        and first value to the coroutine is handled. This is shown
+        by the input in lines 5 and 6, and the output in lines 16,
+        17 and the two blank lines.  
+    3)  Heavy testing on the control flow that passes back the left
+        and right branches sorted value passed. This is shown by the
+        input in lines 7 and 8, and output in lines 19, 21.    
+    4)  Unsorted list that include repetitive numbers is
+        sorted. This is shown by the input in line 9 and output in
+        line 23.
+    5)  The data input in which the values are separated by
+        random white-space characters and appear across 3 of lines
+        is handled correctly. This is shown by the input in lines
+        10, 11, 12 and the output in lines 24, 25.  
+      
+  TEST 2:
+  -------
+    DATA DESCRIPTION
+    The second input file used is "q3input_double.in". It
+    tests the program's ability to sort a list of unsorted
+    double numbers. Sentinel used in this testing is -1. .
+    (For this testing, the program is recompiled with TYPE =
+    double)
+    The contents of the file, with each line numbered, are:
+
+     1  8 30.232 12.121 39.234 43.323 11.235 59.532 20.532 28.532
+     2  1 0.000 
+     3  0
+     4  10 20.23 19.234 18.234 17.32 16.252 15.52 14.2342 13.234 12.234 11.324 
+     5  4 1.23 4.23 6.53 7.235 
+     6  13 3.343 3.343 2.234 2.234 1.33 1.33 4.32 4.32 5.43 4.32 3.343 2.234 1.33 
+     7  5 1.232      3.223
+     8  4.231     2.321 
+     9                          0.000 
+
+
+    The pattern of the input is the same as the input of
+    test 1. So the explanation and analysis of TEST 1 also
+    applies to TEST 2. To save space, explanation and
+    analysis is omitted for TEST 2.
+
+    TESTING
+    Here is the script-fixed log of the testing performed with line numbers
+    attached.
+    
+     1 Script started on Sun 15 Jan 2012 09:54:37 PM EST
+     2  export: Command not found.
+     3  1%>linux024:~/cs343/a1/submit> cat q3input_double.in 
+     4  8 30.232 12.121 39.234 43.323 11.235 59.532 20.532 28.532
+     5  1 0.000 
+     6  0
+     7  10 20.23 19.234 18.234 17.32 16.252 15.52 14.2342 13.234 12.234 11.324 
+     8  4 1.23 4.23 6.53 7.235 
+     9  13 3.343 3.343 2.234 2.234 1.33 1.33 4.32 4.32 5.43 4.32 3.343 2.234 1.33 
+    10  5 1.232      3.223
+    11  4.231     2.321 
+    12                          0.000 
+    13  1%>linux024:~/cs343/a1/submit> ./binsertsort q3input_double.in 
+    14  30.232 12.121 39.234 43.323 11.235 59.532 20.532 28.532 
+    15  11.235 12.121 20.532 28.532 30.232 39.234 43.323 59.532 
+       
+    16  0 
+    17  0 
+       
+    blank line from list of length 0 (not actually printed)
+    blank line from list of length 0 (not actually printed)      
+       
+    18  20.23 19.234 18.234 17.32 16.252 15.52 14.2342 13.234 12.234 11.324 
+    19  11.324 12.234 13.234 14.2342 15.52 16.252 17.32 18.234 19.234 20.23 
+       
+    20  1.23 4.23 6.53 7.235 
+    21  1.23 4.23 6.53 7.235 
+       
+    22  3.343 3.343 2.234 2.234 1.33 1.33 4.32 4.32 5.43 4.32 3.343 2.234 1.33 
+    23  1.33 1.33 1.33 2.234 2.234 2.234 3.343 3.343 3.343 4.32 4.32 4.32 5.43 
+       
+    24  1.232 3.223 4.231 2.321 0 
+    25  0 1.232 2.321 3.223 4.231 
+       
+    26  1%>linux024:~/cs343/a1/submit> exit
+    27  exit
+    28  Script done on Sun 15 Jan 2012 09:54:50 PM EST 
+     
+    
+  TEST 3:
+  -------
+    DATA DESCRIPTION
+    The third input file used is "q3input_Char.in". It
+    tests the program's ability to sort a list of unsorted
+    characters. Sentinel used in this testing is "′\377′" .
+    (For this testing, the program is recompiled with TYPE =
+    char)
+    The contents of the file, with each line numbered, are:
+
+     1  8 d a w e c f s i 
+     2  1 a 
+     3  0
+     4  10 j i h g f e d c b a 
+     5  10 a b c d e f g h i j
+     6  13 a a b b a a e e c z b c z 
+     7  5 z      s   
+     8  w     l 
+     9                          p 
+
+
+    The pattern of the input is the same as the input of
+    test 1. So the explanation and analysis of TEST 1 also
+    applies to TEST 3. To save space, explanation and
+    analysis is omitted for TEST 3.
+
+    TESTING
+    Here is the script-fixed log of the testing performed with line numbers
+    attached.
+
+     1  Script started on Sun 15 Jan 2012 10:09:37 PM EST
+     2  export: Command not found.
+     3  1%>linux024:~/cs343/a1/submit> cat q3input_Char.in 
+     4  8 d a w e c f s i 
+     5  1 a 
+     6  0
+     7  10 j i h g f e d c b a 
+     8  10 a b c d e f g h i j
+     9  13 a a b b a a e e c z b c z 
+    10  5 z      s   
+    11  w     l 
+    12                          p 
+    13  1%>linux024:~/cs343/a1/submit> ./binsertsort q3input_Char.in 
+    14  d a w e c f s i 
+    15  a c d e f i s w 
+       
+    16  a 
+    17  a 
+       
+    blank line from list of length 0 (not actually printed)
+    blank line from list of length 0 (not actually printed)      
+       
+    18  j i h g f e d c b a 
+    19  a b c d e f g h i j 
+       
+    20  a b c d e f g h i j 
+    21  a b c d e f g h i j 
+       
+    22  a a b b a a e e c z b c z 
+    23  a a a a b b b c c e e z z 
+       
+    24  z s w l p 
+    25  l p s w z 
+       
+    26  1%>linux024:~/cs343/a1/submit> exit
+    27  exit
+    28  Script done on Sun 15 Jan 2012 10:09:54 PM EST 
+
+    From this we can say that each condition in the main loop has been
+    exercised, and the basic conversion algorithm has been shown to be correct.
+
+
+  TEST 4: Specify output file name 
+  -------
+    DATA DESCRIPTION
+    Use q3input_Integer.in to test that when output file
+    name is specified, whether the output is written to the file
+    correctly.
+
+    TESTING
+    Here is the script-fixed log of the testing performed.
+    
+     1 Script started on Sun 15 Jan 2012 10:24:30 PM EST
+     2  export: Command not found.
+     3  1%>linux024:~/cs343/a1/submit> ./binsertsort q3input_Integer.in > standard_output
+     4  1%>linux024:~/cs343/a1/submit> ./binsertsort q3input_Integer.in output
+     5  1%>linux024:~/cs343/a1/submit> diff standard_output output 
+     6  1%>linux024:~/cs343/a1/submit> exit
+     7  exit
+     8  Script done on Sun 15 Jan 2012 10:25:27 PM EST
+
+    ANALYSIS
+    line 3 redirects the standard output to file standard_output. 
+    line 4 specifies output filename "output" to the program.
+    line 5 diff the two files, and no difference is shown.
+    Hence output is written to "output" file correctly 
+
+
+  TEST 5: Unreadable and non-existent inputfile 
+  -------
+    DATA DESCRIPTION
+    1. Use q3input_Integer.in, but users don't have the
+    permission to read the file.
+    2. q3input_Integer_No.in doesn't exist. 
+    For both cases the program should print an 
+    appropriate error message and terminate.
+
+
+    TESTING
+    Here is the script-fixed log of the testing performed.
+
+     1  Script started on Sun 15 Jan 2012 10:49:54 PM EST
+     2  export: Command not found.
+     3  1%>linux024:~/cs343/a1/submit> chmod u-r q3input_Integer.in 
+     4  1%>linux024:~/cs343/a1/submit> ./binsertsort q3input_Integer.in 
+     5  Error: unable to open q3input_Integer.in
+     6  1%>linux028:~/cs343/a1/submit> ./binsertsort q3input_Integer_No.in
+     7  Error: unable to open q3input_Integer_No.in
+     8  1%>linux024:~/cs343/a1/submit> exit
+     9  exit
+     10  Script done on Sun 15 Jan 2012 10:50:16 PM EST
+
+    ANALYSIS
+    Line 3 disables users permission to read
+    q3input_Integer.in. Line 5 shows an error message stating
+    that the file cannot be opened.
+    Line 6 runs the program on a non-existent file, and line
+    7 shows an error message stating that the file cannot be
+    opened.
+
+
+  TEST 6: Empty inputfile 
+  -------
+    DATA DESCRIPTION
+    q3input_Integer.in is an empty input file. It is used to
+    verify that the end of file is detected correctly, and no
+    extraneous output is generated.
+
+    TESTING
+    Here is the script-fixed log of the testing performed.
+
+     1  Script started on Sun 15 Jan 2012 10:59:09 PM EST
+     2  export: Command not found.
+     3  1%>linux028:~/cs343/a1/submit> cat q3input_Integer.in 
+     4  1%>linux028:~/cs343/a1/submit> ./binsertsort q3input_Integer.in 
+     5  1%>linux028:~/cs343/a1/submit> exit
+     6  exit
+     7  Script done on Sun 15 Jan 2012 10:59:22 PM EST
+
+    ANALYSIS
+    Line 3 runs the program on "q3input_Integer.in" and lines 4-5 show 
+    that the end-of-file is correctly detected, and no extraneous 
+    output is generated.  Thus the basic input processing algorithm 
+    is shown to be correct.
+
+
+  TEST 7: Unwritable and non-existent outputfile 
+  -------
+    DATA DESCRIPTION
+    1. Specify "output" to the program, but users don't have the
+    permission to write the file. The program should print an 
+    appropriate error message and terminate.
+    2. Specify "output_no" to the program, but the file
+    doesn't exist. The program should open a file called
+    output_no, and write to it.
+        
+    To save space, use a small inputfile "small_input.in"
+    for this test. 
+
+    TESTING
+    Here is the script-fixed log of the testing performed.
+    
+     1 Script started on Sun 15 Jan 2012 11:21:07 PM EST
+     2  export: Command not found.
+     3  1%>linux028:~/cs343/a1/submit> chmod u-w output
+     4  1%>linux028:~/cs343/a1/submit> ./binsertsort small_input.in output
+     5  Error: unable to open output
+     6  1%>linux028:~/cs343/a1/submit> rm output_no 
+     7  1%>linux028:~/cs343/a1/submit> ./binsertsort small_input.in output_no
+     8  1%>linux028:~/cs343/a1/submit> cat output_no 
+     9  3 2 3 5 3 2 5 6 
+    10  2 2 3 3 3 5 5 6 
+       
+    11  1%>linux028:~/cs343/a1/submit> exit
+    12  exit
+    13  Script done on Sun 15 Jan 2012 11:21:51 PM EST
+
+    ANALYSIS
+    Line 3 disables users permission to write to output 
+    Line 5 shows an error message stating that the file
+    cannot be opened to write.
+    Line 6 removes output_no file, line 7 runs the program 
+    on the non-existent file output_no.
+    Lines 8, 9, 10 show that the output is written to the
+    file output_no correctly.
